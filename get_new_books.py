@@ -11,6 +11,36 @@ importlib.reload(C)
 
 converted_books = "/Users/conorneilson/Documents/Books/Calibre Library"
 
+class GetFiles:
+    def __init__(self):
+        self.current_file = C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT
+        self.previous_file = C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS
+        self.new_file = C.FilePaths.WORKING_DIR + C.FilePaths.NEW
+        self.current_books = kindle_utils.read_file(self.current_file)
+        self.previous_books = kindle_utils.read_file(self.previous_file)
+        self.new_books = kindle_utils.read_file(self.new_file)
+
+    def get_new_books(self):
+        new_books = []
+        for book in self.current_books:
+            if book not in self.previous_books:
+                new_books.append(book)
+        return new_books
+
+    def get_new_books_names(self):
+        new_books_names = []
+        for book in self.new_books:
+            new_books_names.append(os.path.basename(book))
+        return new_books_names
+
+    def get_new_books_paths(self):
+        new_books_paths = []
+        for book in self.new_books:
+            new_books_paths.append(book)
+        return new_books_paths
+
+
+
 files = glob.glob(converted_books + '/**/*.epub', recursive=True)
 
 kindle_utils.write_file(C.FilePaths.WORKING_DIR, files, C.FilePaths.CURRENT)
