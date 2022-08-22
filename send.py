@@ -1,31 +1,38 @@
 import smtplib
 import mimetypes
 from email.message import EmailMessage
-from secrets import Creds
-from kindle_utils import read_file
+import secrets as S
+import kindle_utils as K
 import constants as C
+import importlib
+importlib.reload(K)
+importlib.reload(S)
 
-new_books = read_file(C.FilePaths.working_dir + C.FilePaths.NEW)
+new_books = K.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.NEW)
+
+books = K.process_list(new_books)
+
+print(books)
 
 message = EmailMessage()
-sender = Creds.email
-recipient = Creds.pword
+sender = S.Creds.email
+recipient = S.Creds.email
 message['From'] = sender
 message['To'] = recipient
 message['Subject'] = 'Learning to send email from medium.com'
 body = """Hello
 I am learning to send emails using Python!!!"""
 message.set_content(body)
-mime_type, _ = mimetypes.guess_type(new_books[0]) 
+mime_type, _ = mimetypes.guess_type(books[0]) 
 mime_type, mime_subtype = mime_type.split('/')
-with open(new_books[0], 'rb') as file:
+with open(books[0], 'rb') as file:
  message.add_attachment(file.read(),
  maintype=mime_type,
  subtype=mime_subtype,
- filename='something.pdf')
+ filename='Skeleton Key - Anthony Horowitz.epub')
 print(message)
 mail_server = smtplib.SMTP_SSL('smtp.gmail.com')
 mail_server.set_debuglevel(1)
-mail_server.login("your-name@gmail.com", 'Your password')
+mail_server.login(S.Creds.email, S.Creds.pword)
 mail_server.send_message(message)
 mail_server.quit()
