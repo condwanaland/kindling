@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+import os
 import smtplib
 import mimetypes
 from email.message import EmailMessage
@@ -23,14 +26,19 @@ for book in books:
 assert len(books) == len(book_names)
 
 message = EmailMessage()
-sender = S.Creds.email
-recipient = S.Creds.email
+sender = S.Creds.sender_email
+recipient = S.Creds.recipient_email
 message['From'] = sender
 message['To'] = recipient
-message['Subject'] = 'Learning to send email from medium.com'
-body = """Hello
-I am learning to send emails using Python!!!"""
+body = """sent from python script"""
 message.set_content(body)
+
+for (book, book_name) in zip(books, book_names):
+    with open(book, 'rb') as f:
+        file_data = f.read()
+        file_type = mimetypes.guess_type(book)[0]
+        message.add_attachment(file_data, maintype=file_type, subtype='epub', filename=book_name)
+"""
 mime_type, _ = mimetypes.guess_type(books[0]) 
 mime_type, mime_subtype = mime_type.split('/')
 with open(books[0], 'rb') as file:
@@ -38,9 +46,10 @@ with open(books[0], 'rb') as file:
  maintype=mime_type,
  subtype=mime_subtype,
  filename=name)
+"""
 print(message)
 mail_server = smtplib.SMTP_SSL('smtp.gmail.com')
 mail_server.set_debuglevel(1)
-mail_server.login(S.Creds.email, S.Creds.pword)
+mail_server.login(S.Creds.sender_email, S.Creds.sender_pword)
 mail_server.send_message(message)
 mail_server.quit()
