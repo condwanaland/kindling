@@ -8,7 +8,7 @@ Scripts here essentially
 1. Find which ones have been added since the last time the script was run
 1. Email the new ones to my kindles email address
 
-Still very much in progress but feel free to use for your own purposes. To make this run you'll need to update the working directory in `constants.py`. You'll also need a file called `secrets.py` and fill it in with the following.
+Still very much in progress but feel free to use for your own purposes. To make this run you'll need to update the working directory in `constants.py`. You'll also need a file called `secrets.py` and fill it in with the following. If putting your code on github or somewhere public make sure to add `secrets.py` to `.gitignore`.
 
 ```
 class Creds:
