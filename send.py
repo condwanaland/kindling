@@ -10,9 +10,17 @@ importlib.reload(S)
 
 new_books = K.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.NEW)
 
-books = K.process_list(new_books)
+books = K.process_list(new_books) # This removes the newline characters and empty elements
+
 
 print(books)
+
+book_names = []
+for book in books:
+    book_names.append(os.path.basename(book))
+
+
+assert len(books) == len(book_names)
 
 message = EmailMessage()
 sender = S.Creds.email
@@ -29,7 +37,7 @@ with open(books[0], 'rb') as file:
  message.add_attachment(file.read(),
  maintype=mime_type,
  subtype=mime_subtype,
- filename='Skeleton Key - Anthony Horowitz.epub')
+ filename=name)
 print(message)
 mail_server = smtplib.SMTP_SSL('smtp.gmail.com')
 mail_server.set_debuglevel(1)
