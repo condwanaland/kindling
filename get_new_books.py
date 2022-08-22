@@ -9,9 +9,7 @@ importlib.reload(kindle_utils)
 importlib.reload(C)
 
 
-converted_books = "/Users/conorneilson/Documents/Books/Calibre Library"
-
-files = glob.glob(converted_books + '/**/*.epub', recursive=True)
+files = glob.glob(C.FilePaths.CALIBRE_LIBRARY + '/**/*.epub', recursive=True)
 
 kindle_utils.write_file(C.FilePaths.WORKING_DIR, files, C.FilePaths.CURRENT)
 current_file = kindle_utils.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT)
