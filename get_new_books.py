@@ -16,6 +16,7 @@ files = glob.glob(converted_books + '/**/*.epub', recursive=True)
 kindle_utils.write_file(C.FilePaths.WORKING_DIR, files, C.FilePaths.CURRENT)
 current_file = kindle_utils.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT)
 
+
 previous_file = kindle_utils.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS)
 
 new_books = list(set(current_file) - set(previous_file))
