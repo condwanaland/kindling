@@ -9,38 +9,48 @@ importlib.reload(kindle_utils)
 importlib.reload(C)
 
 
-converted_books = "/Users/conorneilson/Documents/Books/Calibre Library"
+calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library"
 
-class GetFiles:
+class GetFiles(calibre_path):
+    
+    files = glob.glob(calibre_path + '/**/*.epub', recursive=True)
+    kindle_utils.write_file(C.FilePaths.WORKING_DIR, files, C.FilePaths.CURRENT)
+
     def __init__(self):
         self.current_file = C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT
         self.previous_file = C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS
         self.new_file = C.FilePaths.WORKING_DIR + C.FilePaths.NEW
         self.current_books = kindle_utils.read_file(self.current_file)
         self.previous_books = kindle_utils.read_file(self.previous_file)
-        self.new_books = kindle_utils.read_file(self.new_file)
+        self.new_books = self.get_new_books()
+        self.new_books_names = self.new_books_names()
 
     def get_new_books(self):
         new_books = []
         for book in self.current_books:
             if book not in self.previous_books:
                 new_books.append(book)
+        #self.new_books = new_books
         return new_books
 
     def get_new_books_names(self):
         new_books_names = []
         for book in self.new_books:
             new_books_names.append(os.path.basename(book))
+        #self.new_books_names = new_books_names
         return new_books_names
 
-    def get_new_books_paths(self):
-        new_books_paths = []
-        for book in self.new_books:
-            new_books_paths.append(book)
-        return new_books_paths
+    # def get_new_books_paths(self):
+    #     new_books_paths = []
+    #     for book in self.new_books:
+    #         new_books_paths.append(book)
+    #     return new_books_paths
 
 
-
+Books = GetFiles()
+print(Books.current_books)
+print(Books.get_new_books())
+"""
 files = glob.glob(converted_books + '/**/*.epub', recursive=True)
 
 kindle_utils.write_file(C.FilePaths.WORKING_DIR, files, C.FilePaths.CURRENT)
@@ -60,3 +70,4 @@ os.remove(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT)
 
 
 
+"""
