@@ -22,7 +22,7 @@ class Books():
         self.new_file = C.FilePaths.WORKING_DIR + C.FilePaths.NEW
         self.current_books = kindle_utils.read_file(self.current_file)
         self.previous_books = kindle_utils.read_file(self.previous_file)
-        self.new_books = self.__get_new_books()
+        self.new_books = self.__process_book_list(self, self.__get_new_books()) # This is a mess. How to do it cleaner?
         self.new_books_names = self.__get_new_books_names()
 
     def __get_new_books(self):
@@ -39,6 +39,13 @@ class Books():
             new_books_names.append(os.path.basename(book))
         return new_books_names
 
+    def __process_book_list(self, booklist: list):
+        processed_books = []
+        for book in booklist:
+            processed_books.append(book.strip())
+        stripped_list = [x for x in processed_books if x]
+        return stripped_list
+
     def cleanup(self):
         print("Writing new 'previous' file")
         kindle_utils.write_file(self.previous_file, self.current_books)
@@ -53,12 +60,12 @@ class Books():
     #     return new_books_paths
 
 
-books = Books(calibre_path)
-print(books.current_books)
-print(books.previous_books)
-print(books.new_books)
-print(books.new_books_names)
-books.cleanup()
+# books = Books(calibre_path)
+# print(books.current_books)
+# print(books.previous_books)
+# print(books.new_books)
+# print(books.new_books_names)
+# books.cleanup()
 """
 files = glob.glob(converted_books + '/**/*.epub', recursive=True)
 
