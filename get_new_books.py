@@ -22,10 +22,10 @@ class GetFiles():
         self.new_file = C.FilePaths.WORKING_DIR + C.FilePaths.NEW
         self.current_books = kindle_utils.read_file(self.current_file)
         self.previous_books = kindle_utils.read_file(self.previous_file)
-        self.new_books = self.get_new_books()
-        self.new_books_names = self.get_new_books_names()
+        self.new_books = self._get_new_books()
+        self.new_books_names = self._get_new_books_names()
 
-    def get_new_books(self):
+    def _get_new_books(self):
         new_books = []
         for book in self.current_books:
             if book not in self.previous_books:
@@ -33,7 +33,7 @@ class GetFiles():
         #return self.new_books = new_books
         return new_books
 
-    def get_new_books_names(self):
+    def _get_new_books_names(self):
         new_books_names = []
         for book in self.new_books:
             new_books_names.append(os.path.basename(book))
