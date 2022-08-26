@@ -4,12 +4,6 @@ import constants as C
 import glob
 import os
 import kindle_utils
-import importlib
-importlib.reload(kindle_utils)
-importlib.reload(C)
-
-
-calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library"
 
 class Books():
 
@@ -52,38 +46,3 @@ class Books():
         print("Removing last 'previous' file")
         os.remove(self.current_file)
         print("Successfully cleaned up")
-
-    # def get_new_books_paths(self):
-    #     new_books_paths = []
-    #     for book in self.new_books:
-    #         new_books_paths.append(book)
-    #     return new_books_paths
-
-
-# books = Books(calibre_path)
-# print(books.current_books)
-# print(books.previous_books)
-# print(books.new_books)
-# print(books.new_books_names)
-# books.cleanup()
-"""
-files = glob.glob(converted_books + '/**/*.epub', recursive=True)
-
-kindle_utils.write_file(C.FilePaths.WORKING_DIR, files, C.FilePaths.CURRENT)
-current_file = kindle_utils.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT)
-
-
-previous_file = kindle_utils.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS)
-
-new_books = list(set(current_file) - set(previous_file))
-
-kindle_utils.write_file(C.FilePaths.WORKING_DIR, new_books, C.FilePaths.NEW)
-print(new_books)
-
-# Need to then clean up state. Not sure when this should be run
-kindle_utils.write_file(C.FilePaths.WORKING_DIR, current_file, C.FilePaths.PREVIOUS)
-os.remove(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT)
-
-
-
-"""
