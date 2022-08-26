@@ -11,12 +11,12 @@ importlib.reload(C)
 
 calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library"
 
-class GetFiles():
-    
-    files = glob.glob(calibre_path + '/**/*.epub', recursive=True)
-    kindle_utils.write_file(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT, files)
+class Books():
 
-    def __init__(self):
+    def __init__(self, calibre_path: str):
+        files = glob.glob(calibre_path + '/**/*.epub', recursive=True)
+        kindle_utils.write_file(C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT, files)
+        
         self.current_file = C.FilePaths.WORKING_DIR + C.FilePaths.CURRENT
         self.previous_file = C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS
         self.new_file = C.FilePaths.WORKING_DIR + C.FilePaths.NEW
@@ -40,8 +40,11 @@ class GetFiles():
         return new_books_names
 
     def cleanup(self):
+        print("Writing new 'previous' file")
         kindle_utils.write_file(self.previous_file, self.current_books)
+        print("Removing last 'previous' file")
         os.remove(self.current_file)
+        print("Successfully cleaned up")
 
     # def get_new_books_paths(self):
     #     new_books_paths = []
@@ -50,12 +53,12 @@ class GetFiles():
     #     return new_books_paths
 
 
-Books = GetFiles()
-print(Books.current_books)
-print(Books.previous_books)
-print(Books.new_books)
-print(Books.new_books_names())
-print(Books.get_new_books())
+books = Books(calibre_path)
+print(books.current_books)
+print(books.previous_books)
+print(books.new_books)
+print(books.new_books_names)
+books.cleanup()
 """
 files = glob.glob(converted_books + '/**/*.epub', recursive=True)
 
