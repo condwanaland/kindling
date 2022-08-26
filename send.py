@@ -8,22 +8,13 @@ import secrets as S
 import kindle_utils as K
 import constants as C
 import importlib
+from books import Books
 importlib.reload(K)
 importlib.reload(S)
+importlib.reload(Books)
 
-new_books = K.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.NEW)
-
-books = K.process_list(new_books) # This removes the newline characters and empty elements
-
-
-print(books)
-
-book_names = []
-for book in books:
-    book_names.append(os.path.basename(book))
-
-
-assert len(books) == len(book_names)
+calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library"
+books = Books(calibre_path)
 
 message = EmailMessage()
 sender = S.Creds.sender_email
@@ -33,7 +24,7 @@ message['To'] = recipient
 body = """sent from python script"""
 message.set_content(body)
 
-for (book, book_name) in zip(books, book_names):
+for (book, book_name) in zip(books.new_books, books.new_books_names):
     with open(book, 'rb') as f:
         file_data = f.read()
         file_type = mimetypes.guess_type(book)[0]
@@ -53,3 +44,4 @@ mail_server.set_debuglevel(1)
 mail_server.login(S.Creds.sender_email, S.Creds.sender_pword)
 mail_server.send_message(message)
 mail_server.quit()
+books.cleanup()
