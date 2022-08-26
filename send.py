@@ -13,15 +13,8 @@ importlib.reload(K)
 importlib.reload(S)
 importlib.reload(Books)
 
-
-#new_books = K.read_file(C.FilePaths.WORKING_DIR + C.FilePaths.NEW)
-
 calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library"
 books = Books(calibre_path)
-
-books.new_books
-books.new_books_names
-
 
 message = EmailMessage()
 sender = S.Creds.sender_email
@@ -51,3 +44,4 @@ mail_server.set_debuglevel(1)
 mail_server.login(S.Creds.sender_email, S.Creds.sender_pword)
 mail_server.send_message(message)
 mail_server.quit()
+books.cleanup()
