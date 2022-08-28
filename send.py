@@ -1,28 +1,17 @@
 #!/usr/bin/env python3
 
-import os
 import smtplib
 import mimetypes
 from email.message import EmailMessage
 import secrets as S
-import kindle_utils as K
-import constants as C
-import importlib
 from books import Books
-importlib.reload(K)
-importlib.reload(S)
-importlib.reload(Books)
 
-calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library"
+calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library" #This is already in a class
 books = Books(calibre_path)
 
 message = EmailMessage()
-sender = S.Creds.sender_email
-recipient = S.Creds.recipient_email
-message['From'] = sender
-message['To'] = recipient
-body = """sent from python script"""
-message.set_content(body)
+message['From'] = S.Creds.sender_email
+message['To'] = S.Creds.recipient_email
 
 for (book, book_name) in zip(books.new_books, books.new_books_names):
     with open(book, 'rb') as f:
