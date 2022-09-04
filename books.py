@@ -16,7 +16,8 @@ class Books():
         self.new_file = C.FilePaths.WORKING_DIR + C.FilePaths.NEW
         self.current_books = kindle_utils.read_file(self.current_file)
         self.previous_books = kindle_utils.read_file(self.previous_file)
-        self.new_books = self.__process_book_list(self, self.__get_new_books()) # This is a mess. How to do it cleaner?
+        self.new_books = self.__process_book_list(self.__get_new_books()) # This is a mess. How to do it cleaner?
+        #self.new_books = self.__get_new_books()
         self.new_books_names = self.__get_new_books_names()
 
     def __get_new_books(self):
@@ -40,9 +41,23 @@ class Books():
         stripped_list = [x for x in processed_books if x]
         return stripped_list
 
+    def num_new_books(self):
+        new_books_count = len(self.new_books)
+        return new_books_count
+
     def cleanup(self):
         print("Writing new 'previous' file")
         kindle_utils.write_file(self.previous_file, self.current_books)
         print("Removing last 'previous' file")
         os.remove(self.current_file)
         print("Successfully cleaned up")
+
+    @staticmethod
+    def initial_setup():
+        if not os.path.exists(C.FilePaths.WORKING_DIR):
+            os.makedirs(C.FilePaths.WORKING_DIR)
+        if not os.path.exists(C.FilePaths.CALIBRE_LIBRARY):
+            raise Exception("Calibre library not found")
+        if not os.path.exists(C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS):
+            kindle_utils.write_file(C.FilePaths.WORKING_DIR + C.FilePaths.PREVIOUS, [])
+        print("Successfully initialized")

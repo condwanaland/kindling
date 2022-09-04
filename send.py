@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
 
 import smtplib
+import sys
 import mimetypes
 from email.message import EmailMessage
 import secrets as S
-from books import Books
+import importlib
+import books as B
+importlib.reload(B)
 
 calibre_path = "/Users/conorneilson/Documents/Books/Calibre Library" #This is already in a class
-books = Books(calibre_path)
+books = B.Books(calibre_path)
+#books.new_books
+num = books.num_new_books()
+
+if num == 0:
+    print("No new books, exiting")
+    sys.exit()
+
+cont = input(f"Found {num} new books, continue? (y/n)")
+
+if cont == "n":
+    print("exiting")
+    sys.exit()
 
 message = EmailMessage()
 message['From'] = S.Creds.sender_email
