@@ -6,13 +6,17 @@ import constants as C
 import time
 
 os.system("open -a Calibre")
+print("Waiting for Calibre to convert...")
+time.sleep(5)
 
 while(True):
     files = glob.glob(C.FilePaths.CALIBRE_LANDING + "/*")
     length = len(files)
     if length == 0:
+        print("converted all books")
         break
     elif length > 0:
+        print("Waiting a bit longer...")
         time.sleep(5)
         continue
     else:
