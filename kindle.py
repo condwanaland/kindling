@@ -42,7 +42,6 @@ with open(books[0], 'rb') as file:
  subtype=mime_subtype,
  filename=name)
 """
-print(message)
 mail_server = smtplib.SMTP_SSL('smtp.gmail.com')
 mail_server.set_debuglevel(1)
 mail_server.login(S.Creds.sender_email, S.Creds.sender_pword)
