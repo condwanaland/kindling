@@ -15,6 +15,8 @@ while(True):
     elif length > 0:
         time.sleep(5)
         continue
+    else:
+        raise Exception("check landing page")
 
 
 os.system("osascript -e 'quit app \"calibre\"'")
