@@ -14,6 +14,7 @@ while(True):
     length = len(files)
     if length == 0:
         print("converted all books")
+        time.sleep(5) # In case of running jobs
         break
     elif length > 0:
         print("Waiting a bit longer...")
