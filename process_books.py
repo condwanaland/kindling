@@ -27,3 +27,6 @@ def calibre_convert(landing_path):
 
 
     os.system("osascript -e 'quit app \"calibre\"'")
+
+# Before opening calibre we should check if the landing directory is empty. If it is - no need to open. 
+# Lets put this in a class. It can have check_landing and open_calibre methods
