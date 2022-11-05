@@ -2,7 +2,6 @@
 
 import os
 import glob
-import constants as C
 import time
 
 def calibre_convert(landing_path):
