@@ -6,6 +6,8 @@ import time
 
 def calibre_convert(landing_path):
 
+    check_landing(landing_path)
+
     os.system("open -a Calibre")
     print("Waiting for Calibre to convert...")
     time.sleep(5)
@@ -29,3 +31,10 @@ def calibre_convert(landing_path):
 
 # Before opening calibre we should check if the landing directory is empty. If it is - no need to open. 
 # Lets put this in a class. It can have check_landing and open_calibre methods
+
+def check_landing(landing_path):
+    files = glob.glob(landing_path + "/*")
+    length = len(files)
+    if length == 0:
+        print("No new books in landing page, skipping calibre")
+        return
