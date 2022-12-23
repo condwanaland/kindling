@@ -14,7 +14,9 @@ importlib.reload(B)
 calibre_path = C.FilePaths.CALIBRE_LIBRARY
 landing_path = C.FilePaths.CALIBRE_LANDING
 
-P.calibre_convert(landing_path)
+books_to_convert = P.check_landing(landing_path)
+if books_to_convert != 0:
+    P.calibre_convert(landing_path)
 
 books = B.Books(calibre_path)
 #books.new_books

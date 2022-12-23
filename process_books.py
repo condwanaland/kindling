@@ -35,6 +35,4 @@ def calibre_convert(landing_path):
 def check_landing(landing_path):
     files = glob.glob(landing_path + "/*")
     length = len(files)
-    if length == 0:
-        print("No new books in landing page, skipping calibre")
-        return
+    return length
