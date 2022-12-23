@@ -24,9 +24,14 @@ if num == 0:
     print("No new books, exiting")
     sys.exit()
 
-cont = input(f"Found {num} new books, continue? (y/n)")
+cont = input(f"Found {num} new books, continue? (y/n/r)")
 
 if cont == "n":
+    print("exiting")
+    sys.exit()
+elif cont == "r":
+    print("writing new baseline files")
+    books.cleanup()
     print("exiting")
     sys.exit()
 
