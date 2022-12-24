@@ -4,7 +4,7 @@ import os
 import glob
 import time
 
-def calibre_convert(landing_path):
+def calibre_convert(landing_path: str) -> None:
 
     check_landing(landing_path)
 
@@ -32,7 +32,7 @@ def calibre_convert(landing_path):
 # Before opening calibre we should check if the landing directory is empty. If it is - no need to open. 
 # Lets put this in a class. It can have check_landing and open_calibre methods
 
-def check_landing(landing_path):
+def check_landing(landing_path: str) -> int:
     files = glob.glob(landing_path + "/*")
     length = len(files)
     return length
