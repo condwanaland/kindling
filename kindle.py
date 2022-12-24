@@ -5,11 +5,9 @@ import sys
 import mimetypes
 from email.message import EmailMessage
 import secrets as S
-import importlib
 import books as B
 import process_books as P
 import constants as C
-importlib.reload(B)
 
 calibre_path = C.FilePaths.CALIBRE_LIBRARY
 landing_path = C.FilePaths.CALIBRE_LANDING
