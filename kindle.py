@@ -43,6 +43,7 @@ for (book, book_name) in zip(books.new_books, books.new_books_names):
     if attachment_size + total_size > 25000000:
         K.send_email(message)
         message = K.init_email()
+        total_size = 0
 
     with open(book, 'rb') as f:
         file_data = f.read()
