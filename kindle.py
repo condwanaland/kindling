@@ -14,9 +14,6 @@ import chunking as K
 calibre_path = C.FilePaths.CALIBRE_LIBRARY
 landing_path = C.FilePaths.CALIBRE_LANDING
 
-os.path.getsize(C.FilePaths.CALIBRE_LANDING)
-os.path.getsize(C.FilePaths.CALIBRE_LIBRARY)
-
 books_to_convert = P.check_landing(landing_path)
 if books_to_convert != 0:
     P.calibre_convert(landing_path)
