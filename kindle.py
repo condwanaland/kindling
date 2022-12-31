@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
 import os
-import smtplib
 import sys
 import mimetypes
-from email.message import EmailMessage
-import secrets as S
 import books as B
 import process_books as P
 import constants as C
