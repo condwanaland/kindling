@@ -1,5 +1,5 @@
 from email.message import EmailMessage
-import secrets as S
+import auth_secrets as S
 import smtplib
 
 def init_email():
