@@ -3,10 +3,10 @@
 import os
 import sys
 import mimetypes
-import books as B
-import process_books as P
-import constants as C
-import chunking as K
+from files import books as B
+from files import process_books as P
+from files import constants as C
+from files import chunking as K
 
 calibre_path = C.FilePaths.CALIBRE_LIBRARY
 landing_path = C.FilePaths.CALIBRE_LANDING
