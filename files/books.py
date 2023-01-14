@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-import constants as C
+from files import constants as C
+from files import kindle_utils
 import glob
 import os
-import kindle_utils
+
 
 class Books():
 
