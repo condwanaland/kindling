@@ -35,6 +35,7 @@ elif cont == "r":
     sys.exit()
 elif cont == "p":
     print(books.new_books_names)
+    sys.exit()
 
 message = K.init_email()
 
