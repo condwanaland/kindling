@@ -23,7 +23,7 @@ if num == 0:
     print("No new books, exiting")
     sys.exit()
 
-cont = input(f"Found {num} new books, continue? (y/n/r)")
+cont = input(f"Found {num} new books, continue? (y/n/r/p)")
 
 if cont == "n":
     print("exiting")
@@ -33,6 +33,8 @@ elif cont == "r":
     books.cleanup()
     print("exiting")
     sys.exit()
+elif cont == "p":
+    print(books.new_books_names)
 
 message = K.init_email()
 
