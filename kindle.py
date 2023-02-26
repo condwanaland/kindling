@@ -23,7 +23,7 @@ if num == 0:
     print("No new books, exiting")
     sys.exit()
 
-cont = input(f"Found {num} new books, continue? (y/n/r/p)")
+cont = input(f"Found {num} new books, continue? (y/n/r/p/help)")
 
 if cont == "n":
     print("exiting")
@@ -36,6 +36,11 @@ elif cont == "r":
 elif cont == "p":
     print(books.new_books_names)
     sys.exit()
+elif cont == "help":
+    print("'y' = continue and send these books to kindle.")
+    print("'n' = terminate program but keep any unsent books ready to be sent next time")
+    print("'r' = do not send these books but mark them as sent so they wont be prompted to send again.")
+    print("'p' = print the names of the new books to be sent.")
 
 message = K.init_email()
 
