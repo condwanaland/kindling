@@ -23,24 +23,31 @@ if num == 0:
     print("No new books, exiting")
     sys.exit()
 
-cont = input(f"Found {num} new books, continue? (y/n/r/p/help)")
+while True:
+    cont = input(f"Found {num} new books, continue? (y/n/r/p/help)")
 
-if cont == "n":
-    print("exiting")
-    sys.exit()
-elif cont == "r":
-    print("writing new baseline files")
-    books.cleanup()
-    print("exiting")
-    sys.exit()
-elif cont == "p":
-    print(books.new_books_names)
-    sys.exit()
-elif cont == "help":
-    print("'y' = continue and send these books to kindle.")
-    print("'n' = terminate program but keep any unsent books ready to be sent next time")
-    print("'r' = do not send these books but mark them as sent so they wont be prompted to send again.")
-    print("'p' = print the names of the new books to be sent.")
+    if cont == "n":
+        print("exiting")
+        sys.exit()
+    elif cont == "r":
+        print("writing new baseline files")
+        books.cleanup()
+        print("exiting")
+        sys.exit()
+    elif cont == "p":
+        print(books.new_books_names)
+        continue
+    elif cont == "help":
+        print("'y' = continue and send these books to kindle.")
+        print("'n' = terminate program but keep any unsent books ready to be sent next time")
+        print("'r' = do not send these books but mark them as sent so they wont be prompted to send again.")
+        print("'p' = print the names of the new books to be sent.")
+        continue
+    elif cont == "y":
+        break
+    else:
+        print("unrecognised input, please try again")
+        continue
 
 message = K.init_email()
 
