@@ -39,7 +39,7 @@ class Books():
         processed_books = []
         for book in booklist:
             processed_books.append(book.strip())
-        stripped_list = [x for x in processed_books if x]
+        stripped_list = [x for x in processed_books if x and "original_epub" not in x]
         return stripped_list
 
     def num_new_books(self) -> list:

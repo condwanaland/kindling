@@ -10,7 +10,7 @@ def init_email() -> EmailMessage:
 
 def send_email(message) -> None:
     mail_server = smtplib.SMTP_SSL('smtp.gmail.com')
-    mail_server.set_debuglevel(1)
+    #mail_server.set_debuglevel(1)
     mail_server.login(S.Creds.sender_email, S.Creds.sender_pword)
     mail_server.send_message(message)
     mail_server.quit()
