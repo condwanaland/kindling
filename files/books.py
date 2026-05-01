@@ -2,8 +2,10 @@
 
 from files import constants as C
 from files import kindle_utils
+import datetime
 import glob
 import os
+import shutil
 
 
 class Books():
@@ -39,7 +41,10 @@ class Books():
         processed_books = []
         for book in booklist:
             processed_books.append(book.strip())
-        stripped_list = [x for x in processed_books if x and "original_epub" not in x]
+        stripped_list = [
+            x for x in processed_books
+            if x and "original_epub" not in x and "/.caltrash/" not in x
+        ]
         return stripped_list
 
     def num_new_books(self) -> list:
@@ -47,10 +52,18 @@ class Books():
         return new_books_count
 
     def cleanup(self) -> None:
+        print("Writing last sent books file")
+        kindle_utils.write_file(self.new_file, self.new_books)
+        if os.path.exists(self.previous_file):
+            timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+            backup_file = f"{self.previous_file}.{timestamp}.bak"
+            print(f"Backing up previous file to {backup_file}")
+            shutil.copy2(self.previous_file, backup_file)
         print("Writing new 'previous' file")
         kindle_utils.write_file(self.previous_file, self.current_books)
         print("Removing last 'previous' file")
-        os.remove(self.current_file)
+        if os.path.exists(self.current_file):
+            os.remove(self.current_file)
         print("Successfully cleaned up")
 
     @staticmethod

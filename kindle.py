@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
+#!/Users/cneilson/.pyenv/versions/kindling/bin/python
 
 import os
 import sys
-import mimetypes
+import copy
 from files import books as B
 from files import process_books as P
 from files import constants as C
@@ -53,24 +53,52 @@ while True:
         print("unrecognised input, please try again")
         continue
 
-message = K.init_email()
+MAX_EMAIL_BYTES = 25_000_000
+MAX_ATTACHMENTS = 25
 
-total_size = 0
+message = K.init_email()
 for (book, book_name) in zip(books.new_books, books.new_books_names):
-    attachment_size = os.path.getsize(book)
-    print(attachment_size)
-    if attachment_size + total_size > 25000000:
+    if K.attachment_count(message) >= MAX_ATTACHMENTS:
+        print(
+            f"Sending batch with {K.attachment_count(message)} attachments "
+            f"at {K.message_size(message)} bytes"
+        )
         K.send_email(message)
         message = K.init_email()
-        total_size = 0
 
-    with open(book, 'rb') as f:
-        file_data = f.read()
-        file_type = mimetypes.guess_type(book)[0]
-        message.add_attachment(file_data, maintype=file_type, subtype='epub', filename=book_name)
-    
-    total_size = total_size + attachment_size
+    attachment_size = os.path.getsize(book)
+    candidate = copy.deepcopy(message)
+    K.add_attachment(candidate, book, book_name)
+    candidate_size = K.message_size(candidate)
 
-K.send_email(message)
+    if candidate_size > MAX_EMAIL_BYTES and K.has_attachments(message):
+        print(
+            f"Sending batch with {K.attachment_count(message)} attachments "
+            f"at {K.message_size(message)} bytes"
+        )
+        K.send_email(message)
+        message = K.init_email()
+        K.add_attachment(message, book, book_name)
+        message_size = K.message_size(message)
+        if message_size > MAX_EMAIL_BYTES:
+            raise Exception(
+                f"{book_name} is {message_size} bytes as an email attachment "
+                f"and cannot fit under the {MAX_EMAIL_BYTES} byte limit"
+            )
+    elif candidate_size > MAX_EMAIL_BYTES:
+        raise Exception(
+            f"{book_name} is {candidate_size} bytes as an email attachment "
+            f"and cannot fit under the {MAX_EMAIL_BYTES} byte limit"
+        )
+    else:
+        print(f"Queued {book_name}: {attachment_size} file bytes, {candidate_size} email bytes")
+        message = candidate
+
+if K.has_attachments(message):
+    print(
+        f"Sending final batch with {K.attachment_count(message)} attachments "
+        f"at {K.message_size(message)} bytes"
+    )
+    K.send_email(message)
 
 books.cleanup()
