@@ -3,10 +3,14 @@ import auth_secrets as S
 import mimetypes
 import smtplib
 
-def init_email() -> EmailMessage:
+def init_email(recipient_emails=None) -> EmailMessage:
     message = EmailMessage()
     message['From'] = S.Creds.sender_email
-    message['To'] = S.Creds.recipient_email
+    if recipient_emails is None:
+        recipient_emails = [S.Creds.recipient_email]
+    elif isinstance(recipient_emails, str):
+        recipient_emails = [recipient_emails]
+    message['To'] = ", ".join(recipient_emails)
     return message
 
 def send_email(message) -> None:

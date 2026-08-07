@@ -1,12 +1,14 @@
 #!/Users/cneilson/.pyenv/versions/kindling/bin/python
 
+import copy
 import os
 import sys
-import copy
+
+import auth_secrets as S
 from files import books as B
-from files import process_books as P
-from files import constants as C
 from files import chunking as K
+from files import constants as C
+from files import process_books as P
 
 calibre_path = C.FilePaths.CALIBRE_LIBRARY
 landing_path = C.FilePaths.CALIBRE_LANDING
@@ -24,7 +26,7 @@ if num == 0:
     sys.exit()
 
 while True:
-    cont = input(f"Found {num} new books, continue? (y/n/r/p/help)")
+    cont = input(f"Found {num} new books, continue? (y/a/b/n/r/p/help) ").strip().lower()
 
     if cont == "n":
         print("exiting")
@@ -40,7 +42,9 @@ while True:
     elif cont == "help":
         print(
             """
-            'y' = continue and send these books to kindle.
+            'y' = send these books to your usual Kindle address.
+            'a' = send these books to the alternate Kindle address.
+            'b' = send these books to both Kindle addresses.
             'n' = terminate program but keep any unsent books ready to be sent next time.
             'r' = do not send these books but mark them as sent so they wont be prompted to send again.
             'p' = print the names of the new books to be sent.
@@ -48,6 +52,16 @@ while True:
         )
         continue
     elif cont == "y":
+        recipient_emails = [S.Creds.recipient_email]
+        break
+    elif cont == "a":
+        recipient_emails = [S.Creds.alternate_recipient_email]
+        break
+    elif cont == "b":
+        recipient_emails = [
+            S.Creds.recipient_email,
+            S.Creds.alternate_recipient_email,
+        ]
         break
     else:
         print("unrecognised input, please try again")
@@ -56,7 +70,7 @@ while True:
 MAX_EMAIL_BYTES = 25_000_000
 MAX_ATTACHMENTS = 25
 
-message = K.init_email()
+message = K.init_email(recipient_emails)
 for (book, book_name) in zip(books.new_books, books.new_books_names):
     if K.attachment_count(message) >= MAX_ATTACHMENTS:
         print(
@@ -64,7 +78,7 @@ for (book, book_name) in zip(books.new_books, books.new_books_names):
             f"at {K.message_size(message)} bytes"
         )
         K.send_email(message)
-        message = K.init_email()
+        message = K.init_email(recipient_emails)
 
     attachment_size = os.path.getsize(book)
     candidate = copy.deepcopy(message)
@@ -77,7 +91,7 @@ for (book, book_name) in zip(books.new_books, books.new_books_names):
             f"at {K.message_size(message)} bytes"
         )
         K.send_email(message)
-        message = K.init_email()
+        message = K.init_email(recipient_emails)
         K.add_attachment(message, book, book_name)
         message_size = K.message_size(message)
         if message_size > MAX_EMAIL_BYTES:
