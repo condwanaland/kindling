@@ -26,7 +26,7 @@ if num == 0:
     sys.exit()
 
 while True:
-    cont = input(f"Found {num} new books, continue? (y/a/b/n/r/p/help) ").strip().lower()
+    cont = input(f"Found {num} new books, continue? (y/a/b/s/n/r/p/help) ").strip().lower()
 
     if cont == "n":
         print("exiting")
@@ -39,12 +39,22 @@ while True:
     elif cont == "p":
         print(books.new_books_names)
         continue
+    elif cont == "s":
+        export_folder = P.save_epubs(
+            books.new_books,
+            C.FilePaths.EPUB_EXPORT_ROOT,
+        )
+        print(f"Saved {num} EPUBs to {export_folder}")
+        books.cleanup()
+        print("exiting without sending email")
+        sys.exit()
     elif cont == "help":
         print(
             """
             'y' = send these books to your usual Kindle address.
             'a' = send these books to the alternate Kindle address.
             'b' = send these books to both Kindle addresses.
+            's' = do not send these books; save them to a new, dated folder instead.
             'n' = terminate program but keep any unsent books ready to be sent next time.
             'r' = do not send these books but mark them as sent so they wont be prompted to send again.
             'p' = print the names of the new books to be sent.

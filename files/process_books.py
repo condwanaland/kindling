@@ -1,8 +1,55 @@
 #!/usr/bin/env python3
 
-import os
+import datetime
 import glob
+import os
+import shutil
 import time
+from typing import Optional
+
+
+def _unused_path(directory: str, filename: str) -> str:
+    """Return a path that will not overwrite another exported book."""
+    destination = os.path.join(directory, filename)
+    if not os.path.exists(destination):
+        return destination
+
+    stem, extension = os.path.splitext(filename)
+    copy_number = 2
+    while True:
+        destination = os.path.join(
+            directory,
+            f"{stem} ({copy_number}){extension}",
+        )
+        if not os.path.exists(destination):
+            return destination
+        copy_number += 1
+
+
+def save_epubs(
+    book_paths: list[str],
+    destination_root: str,
+    now: Optional[datetime.datetime] = None,
+) -> str:
+    """Copy books into a new, timestamped folder and return its path."""
+    timestamp = (now or datetime.datetime.now()).strftime("%Y-%m-%d_%H%M%S")
+    destination_root = os.path.expanduser(destination_root)
+    os.makedirs(destination_root, exist_ok=True)
+
+    base_folder = os.path.join(destination_root, f"Kindle Export {timestamp}")
+    export_folder = base_folder
+    copy_number = 2
+    while os.path.exists(export_folder):
+        export_folder = f"{base_folder} ({copy_number})"
+        copy_number += 1
+    os.makedirs(export_folder)
+
+    for book_path in book_paths:
+        destination = _unused_path(export_folder, os.path.basename(book_path))
+        shutil.copy2(book_path, destination)
+
+    return export_folder
+
 
 def calibre_convert(landing_path: str) -> None:
 

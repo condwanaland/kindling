@@ -9,8 +9,10 @@ Scripts here essentially
 1. Email the new ones to my kindles email address
 
 When prompted, use `y` to send to the usual Kindle address, `a` to send to the
-alternate Kindle address, or `b` to send to both. A successful send through any
-of these options updates the baseline so the same books are not offered again.
+alternate Kindle address, or `b` to send to both. Use `s` to skip email and copy
+all newly processed EPUBs into a new timestamped `Kindle Export` folder under
+`~/Documents/Books`. A successful send or export updates the baseline so the
+same books are not offered again.
 
 Still very much in progress but feel free to use for your own purposes. To make this run you'll need to update the working directory in `constants.py`. You'll also need a file called `auth_secrets.py` and fill it in with the following. If putting your code on github or somewhere public make sure to add `auth_secrets.py` to `.gitignore`.
 
