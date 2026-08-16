@@ -46,6 +46,8 @@ while True:
         )
         print(f"Saved {num} EPUBs to {export_folder}")
         books.cleanup()
+        if not P.open_folder(export_folder):
+            print(f"Could not open {export_folder} in Finder")
         print("exiting without sending email")
         sys.exit()
     elif cont == "help":

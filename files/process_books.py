@@ -4,6 +4,7 @@ import datetime
 import glob
 import os
 import shutil
+import subprocess
 import time
 from typing import Optional
 
@@ -49,6 +50,12 @@ def save_epubs(
         shutil.copy2(book_path, destination)
 
     return export_folder
+
+
+def open_folder(path: str) -> bool:
+    """Open a folder in Finder, returning whether Finder launched successfully."""
+    result = subprocess.run(["open", path], check=False)
+    return result.returncode == 0
 
 
 def calibre_convert(landing_path: str) -> None:

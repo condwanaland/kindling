@@ -2,8 +2,9 @@ import datetime
 import os
 import tempfile
 import unittest
+from unittest import mock
 
-from files.process_books import save_epubs
+from files.process_books import open_folder, save_epubs
 
 
 class SaveEpubsTest(unittest.TestCase):
@@ -49,6 +50,20 @@ class SaveEpubsTest(unittest.TestCase):
 
             self.assertNotEqual(first_folder, second_folder)
             self.assertEqual(second_folder, f"{first_folder} (2)")
+
+
+class OpenFolderTest(unittest.TestCase):
+    @mock.patch("files.process_books.subprocess.run")
+    def test_opens_export_folder_in_finder(self, run):
+        run.return_value.returncode = 0
+
+        opened = open_folder("/Users/example/Documents/Books/Kindle Export")
+
+        self.assertTrue(opened)
+        run.assert_called_once_with(
+            ["open", "/Users/example/Documents/Books/Kindle Export"],
+            check=False,
+        )
 
 
 if __name__ == "__main__":
