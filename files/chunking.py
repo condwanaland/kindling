@@ -1,22 +1,31 @@
-from email.message import EmailMessage
-import auth_secrets as S
 import mimetypes
 import smtplib
+from email.message import EmailMessage
 
-def init_email(recipient_emails=None) -> EmailMessage:
+
+def load_credentials():
+    """Load private email credentials only when an email action needs them."""
+    import auth_secrets
+
+    return auth_secrets.Creds
+
+
+def init_email(recipient_emails=None, credentials=None) -> EmailMessage:
+    credentials = credentials or load_credentials()
     message = EmailMessage()
-    message['From'] = S.Creds.sender_email
+    message["From"] = credentials.sender_email
     if recipient_emails is None:
-        recipient_emails = [S.Creds.recipient_email]
+        recipient_emails = [credentials.recipient_email]
     elif isinstance(recipient_emails, str):
         recipient_emails = [recipient_emails]
-    message['To'] = ", ".join(recipient_emails)
+    message["To"] = ", ".join(recipient_emails)
     return message
 
-def send_email(message) -> None:
-    mail_server = smtplib.SMTP_SSL('smtp.gmail.com')
-    #mail_server.set_debuglevel(1)
-    mail_server.login(S.Creds.sender_email, S.Creds.sender_pword)
+
+def send_email(message, credentials=None) -> None:
+    credentials = credentials or load_credentials()
+    mail_server = smtplib.SMTP_SSL("smtp.gmail.com")
+    mail_server.login(credentials.sender_email, credentials.sender_pword)
     mail_server.send_message(message)
     mail_server.quit()
 
@@ -25,9 +34,9 @@ def add_attachment(message: EmailMessage, path: str, filename: str) -> None:
     file_type = mimetypes.guess_type(path)[0] or "application/octet-stream"
     maintype, subtype = file_type.split("/", 1)
 
-    with open(path, "rb") as f:
+    with open(path, "rb") as file:
         message.add_attachment(
-            f.read(),
+            file.read(),
             maintype=maintype,
             subtype=subtype,
             filename=filename,

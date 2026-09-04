@@ -1,70 +1,84 @@
 import datetime
-import os
-import tempfile
-import unittest
-from unittest import mock
+from types import SimpleNamespace
+from unittest.mock import Mock, call
 
-from files.process_books import open_folder, save_epubs
+import pytest
 
-
-class SaveEpubsTest(unittest.TestCase):
-    def test_saves_every_epub_without_overwriting_duplicate_names(self):
-        with tempfile.TemporaryDirectory() as temporary_directory:
-            first_source = os.path.join(temporary_directory, "first")
-            second_source = os.path.join(temporary_directory, "second")
-            export_root = os.path.join(temporary_directory, "exports")
-            os.makedirs(first_source)
-            os.makedirs(second_source)
-
-            first_book = os.path.join(first_source, "Example.epub")
-            second_book = os.path.join(second_source, "Example.epub")
-            with open(first_book, "w") as book:
-                book.write("first")
-            with open(second_book, "w") as book:
-                book.write("second")
-
-            export_folder = save_epubs(
-                [first_book, second_book],
-                export_root,
-                now=datetime.datetime(2026, 8, 16, 14, 30, 5),
-            )
-
-            self.assertEqual(
-                export_folder,
-                os.path.join(export_root, "Kindle Export 2026-08-16_143005"),
-            )
-            self.assertEqual(
-                sorted(os.listdir(export_folder)),
-                ["Example (2).epub", "Example.epub"],
-            )
-            with open(os.path.join(export_folder, "Example.epub")) as book:
-                self.assertEqual(book.read(), "first")
-            with open(os.path.join(export_folder, "Example (2).epub")) as book:
-                self.assertEqual(book.read(), "second")
-
-    def test_creates_a_unique_folder_for_repeated_timestamp(self):
-        with tempfile.TemporaryDirectory() as temporary_directory:
-            now = datetime.datetime(2026, 8, 16, 14, 30, 5)
-            first_folder = save_epubs([], temporary_directory, now=now)
-            second_folder = save_epubs([], temporary_directory, now=now)
-
-            self.assertNotEqual(first_folder, second_folder)
-            self.assertEqual(second_folder, f"{first_folder} (2)")
+from files import process_books
 
 
-class OpenFolderTest(unittest.TestCase):
-    @mock.patch("files.process_books.subprocess.run")
-    def test_opens_export_folder_in_finder(self, run):
-        run.return_value.returncode = 0
+def test_save_epubs_preserves_duplicate_filenames(tmp_path):
+    first_source = tmp_path / "first"
+    second_source = tmp_path / "second"
+    first_source.mkdir()
+    second_source.mkdir()
+    first_book = first_source / "Example.epub"
+    second_book = second_source / "Example.epub"
+    first_book.write_text("first")
+    second_book.write_text("second")
 
-        opened = open_folder("/Users/example/Documents/Books/Kindle Export")
+    export_folder = process_books.save_epubs(
+        [str(first_book), str(second_book)],
+        str(tmp_path / "exports"),
+        now=datetime.datetime(2026, 8, 16, 14, 30, 5),
+    )
 
-        self.assertTrue(opened)
-        run.assert_called_once_with(
-            ["open", "/Users/example/Documents/Books/Kindle Export"],
-            check=False,
+    export_path = tmp_path / "exports" / "Kindle Export 2026-08-16_143005"
+    assert export_folder == str(export_path)
+    assert sorted(path.name for path in export_path.iterdir()) == [
+        "Example (2).epub",
+        "Example.epub",
+    ]
+    assert (export_path / "Example.epub").read_text() == "first"
+    assert (export_path / "Example (2).epub").read_text() == "second"
+
+
+def test_save_epubs_creates_unique_folder_for_repeated_timestamp(tmp_path):
+    now = datetime.datetime(2026, 8, 16, 14, 30, 5)
+
+    first_folder = process_books.save_epubs([], str(tmp_path), now=now)
+    second_folder = process_books.save_epubs([], str(tmp_path), now=now)
+
+    assert second_folder == f"{first_folder} (2)"
+
+
+def test_save_epubs_raises_when_a_source_book_is_missing(tmp_path):
+    with pytest.raises(FileNotFoundError):
+        process_books.save_epubs(
+            [str(tmp_path / "missing.epub")],
+            str(tmp_path / "exports"),
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.mark.parametrize(("return_code", "expected"), [(0, True), (1, False)])
+def test_open_folder_reports_command_result(monkeypatch, return_code, expected):
+    run = Mock(return_value=SimpleNamespace(returncode=return_code))
+    monkeypatch.setattr(process_books.subprocess, "run", run)
+
+    assert process_books.open_folder("/export folder") is expected
+    run.assert_called_once_with(["open", "/export folder"], check=False)
+
+
+def test_check_landing_counts_entries(tmp_path):
+    (tmp_path / "one.epub").write_bytes(b"one")
+    (tmp_path / "two.mobi").write_bytes(b"two")
+
+    assert process_books.check_landing(str(tmp_path)) == 2
+
+
+def test_calibre_convert_opens_waits_for_conversion_and_quits(monkeypatch):
+    system = Mock()
+    sleep = Mock()
+    glob = Mock(side_effect=[["queued"], ["queued"], []])
+    monkeypatch.setattr(process_books.os, "system", system)
+    monkeypatch.setattr(process_books.time, "sleep", sleep)
+    monkeypatch.setattr(process_books.glob, "glob", glob)
+
+    process_books.calibre_convert("/landing")
+
+    assert system.call_args_list == [
+        call("open -a Calibre"),
+        call("osascript -e 'quit app \"calibre\"'"),
+    ]
+    assert sleep.call_count == 3
+    assert glob.call_count == 3

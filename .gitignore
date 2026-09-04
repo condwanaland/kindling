@@ -1,2 +1,3 @@
 auth_secrets.py
 *.pyc
+.pytest_cache/

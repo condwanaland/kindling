@@ -47,7 +47,7 @@ class Books():
         ]
         return stripped_list
 
-    def num_new_books(self) -> list:
+    def num_new_books(self) -> int:
         new_books_count = len(self.new_books)
         return new_books_count
 
